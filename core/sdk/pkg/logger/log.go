@@ -40,5 +40,17 @@ func Setup(opts ...Option) logger.Logger {
 		output = os.Stdout
 	}
 
+	var level logger.Level
+	level, err = logger.GetLevel(op.level)
+
+	if err != nil {
+		logger.Fatalf("get log level error: %s", err.Error())
+	}
+
+	switch op.driver {
+	case "zap":
+		// logger.DefaultLogger, err =
+	}
+
 	return nil
 }
