@@ -5,6 +5,7 @@ type options struct {
 	path   string
 	stdout string
 	level  string
+	cap    uint
 }
 
 type Option func(*options)
@@ -33,5 +34,11 @@ func WithStdout(s string) Option {
 func WithLevel(s string) Option {
 	return func(o *options) {
 		o.level = s
+	}
+}
+
+func WithCap(n uint) Option {
+	return func(o *options) {
+		o.cap = n
 	}
 }
