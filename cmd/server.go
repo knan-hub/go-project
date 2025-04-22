@@ -2,6 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"go-project/consts"
+	"go-project/dao"
+	"go-project/logger"
+	"go-project/redis"
+	"go-project/router"
+	"go-project/setting"
 	"os"
 	"strings"
 )
@@ -23,5 +29,29 @@ func Execute() {
 	}
 
 	// 加载配置文件
+	if err := setting.Init(configFile); err != nil {
+		fmt.Printf("load config failed, err:%v\n", err)
+		return
+	}
 
+	consts.Init(setting.Config.VectorDbConfig)
+
+	if err := logger.Init(setting.Config.LogConfig, setting.Config.Mode); err != nil {
+		fmt.Printf("init logger failed, err:%v\n", err)
+		return
+	}
+
+	if err := dao.Init(setting.Config.VectorDbConfig); err != nil {
+		fmt.Printf("init vector db failed, err:%v\n", err)
+		return
+	}
+
+	redis.Init(setting.Config.RedisConfig)
+
+	r := router.Setup(setting.Config.Mode)
+	err := r.Run(fmt.Sprintf(":%d", setting.Config.Port))
+	if err != nil {
+		fmt.Printf("run server failed, err:%v\n", err)
+		return
+	}
 }
