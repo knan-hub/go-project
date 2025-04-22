@@ -8,21 +8,25 @@ import (
 	"github.com/spf13/viper"
 )
 
-type AppConfig struct {
+type Settings struct {
+	Application ApplicationConfig `mapstructure:"application"`
+	Self        SelfConfig        `mapstructure:"self"`
+	Log         LogConfig         `mapstructure:"log"`
+	VerctorDb   VerctorDbConfig   `mapstructure:"verctorDb"`
+	Redis       RedisConfig       `mapstructure:"redis"`
+}
+
+type ApplicationConfig struct {
 	Name      string `mapstructure:"name"`
 	Mode      string `mapstructure:"mode"`
+	Host      string `mapstructure:"host"`
+	Port      int    `mapstructure:"port"`
 	Version   string `mapstructure:"version"`
 	StartTime string `mapstructure:"start_time"`
 	MachineID int64  `mapstructure:"machine_id"`
-	Port      int    `mapstructure:"port"`
-
-	*Self           `mapstructure:"self"`
-	*LogConfig      `mapstructure:"log"`
-	*VectorDbConfig `mapstructure:"verctorDb"`
-	*RedisConfig    `mapstructure:"redis"`
 }
 
-type Self struct {
+type SelfConfig struct {
 	INTERNAL_API_KEY string `mapstructure:"INTERNAL_API_KEY"`
 }
 
@@ -34,7 +38,7 @@ type LogConfig struct {
 	MaxBackups int    `mapstructure:"max_backups"`
 }
 
-type VectorDbConfig struct {
+type VerctorDbConfig struct {
 	Url                         string `mapstructure:"url"`
 	Key                         string `mapstructure:"key"`
 	Username                    string `mapstructure:"username"`
@@ -51,24 +55,24 @@ type RedisConfig struct {
 	DialTimeout time.Duration `mapstructure:"dialTimeout"`
 }
 
-var Config = new(AppConfig)
+var Config = new(Settings)
 
 func Init(filePath string) (err error) {
 	// 方式1：直接指定配置文件路径（相对路径或者绝对路径）
 	// 相对路径：相对执行的可执行文件的相对路径
-	//viper.SetConfigFile("./conf/config.yaml")
+	// viper.SetConfigFile("./conf/config.yaml")
 	// 绝对路径：系统中实际的文件路径
-	//viper.SetConfigFile("/Users/liwenzhou/Desktop/bluebell/conf/config.yaml")
+	// viper.SetConfigFile("/Users/liwenzhou/Desktop/bluebell/conf/config.yaml")
 
 	// 方式2：指定配置文件名和配置文件的位置，viper自行查找可用的配置文件
 	// 配置文件名不需要带后缀
 	// 配置文件位置可配置多个
-	//viper.SetConfigName("config") // 指定配置文件名（不带后缀）
-	//viper.AddConfigPath(".") // 指定查找配置文件的路径（这里使用相对路径）
+	// viper.SetConfigName("config") // 指定配置文件名（不带后缀）
+	// viper.AddConfigPath(".") // 指定查找配置文件的路径（这里使用相对路径）
 	// viper.AddConfigPath("./conf")      // 指定查找配置文件的路径（这里使用相对路径）
 
 	// 基本上是配合远程配置中心使用的，告诉viper当前的数据使用什么格式去解析
-	//viper.SetConfigType("json")
+	// viper.SetConfigType("json")
 
 	viper.SetConfigFile(filePath)
 
@@ -79,8 +83,8 @@ func Init(filePath string) (err error) {
 		return
 	}
 
-	// 把读取到的配置信息反序列化到 Conf 变量中
-	if err := viper.Unmarshal(Config); err != nil {
+	// 把读取到的配置信息反序列化到Config变量中
+	if err := viper.UnmarshalKey("settings", Config); err != nil {
 		fmt.Printf("viper.Unmarshal failed, err:%v\n", err)
 	}
 

@@ -15,7 +15,7 @@ var (
 	Db     *tcvectordb.AIDatabase
 )
 
-func Init(cfg *setting.VectorDbConfig) (err error) {
+func Init(cfg *setting.VerctorDbConfig) (err error) {
 	var defaultOption = &tcvectordb.ClientOption{
 		Timeout:            30 * time.Second,
 		MaxIdldConnPerHost: 2,

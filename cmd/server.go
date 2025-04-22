@@ -34,22 +34,22 @@ func Execute() {
 		return
 	}
 
-	consts.Init(setting.Config.VectorDbConfig)
+	consts.Init(&setting.Config.VerctorDb)
 
-	if err := logger.Init(setting.Config.LogConfig, setting.Config.Mode); err != nil {
+	if err := logger.Init(&setting.Config.Log, setting.Config.Application.Mode); err != nil {
 		fmt.Printf("init logger failed, err:%v\n", err)
 		return
 	}
 
-	if err := dao.Init(setting.Config.VectorDbConfig); err != nil {
+	if err := dao.Init(&setting.Config.VerctorDb); err != nil {
 		fmt.Printf("init vector db failed, err:%v\n", err)
 		return
 	}
 
-	redis.Init(setting.Config.RedisConfig)
+	redis.Init(&setting.Config.Redis)
 
-	r := router.Setup(setting.Config.Mode)
-	err := r.Run(fmt.Sprintf(":%d", setting.Config.Port))
+	r := router.Setup(setting.Config.Application.Mode)
+	err := r.Run(fmt.Sprintf(":%d", setting.Config.Application.Port))
 	if err != nil {
 		fmt.Printf("run server failed, err:%v\n", err)
 		return
