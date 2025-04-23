@@ -1,6 +1,7 @@
 package router
 
 import (
+	"go-project/controller"
 	"go-project/middleware"
 	"net/http"
 
@@ -35,7 +36,8 @@ func Init(mode string) *gin.Engine {
 	api := r.Group("/v0")
 	api.Use(middleware.Auth())
 	{
-
+		api.POST("/cache", middleware.Auth(), controller.Set)
+		api.GET("/cache", middleware.Auth(), controller.Get)
 	}
 
 	// /debug/pprof/ (性能分析首页)

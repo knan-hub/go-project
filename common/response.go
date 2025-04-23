@@ -12,7 +12,7 @@ type Response struct {
 	Data interface{} `json:"data,omitempty"`
 }
 
-func ResponseSuccess(c *gin.Context, data interface{}) {
+func ResponseSuccess(c *gin.Context, data ...interface{}) {
 	c.JSON(http.StatusOK, &Response{
 		Code: SUCCESS,
 		Msg:  SUCCESS.Msg(),
