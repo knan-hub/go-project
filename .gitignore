@@ -3,3 +3,5 @@ runtime/
 .idea
 .vscode
 tmp/
+
+web_app.log
