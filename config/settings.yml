@@ -4,8 +4,8 @@ settings:
     mode: dev
     host: localhost
     port: 8000
-    read_timeout: 60
-    write_timeout: 60
+    read_timeout: 60s
+    write_timeout: 60s
     version: "v0.0.1"
     start_time: "2024-07-24"
     machine_id: 1
