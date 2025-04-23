@@ -1,4 +1,4 @@
-package service
+package common
 
 import (
 	"net/http"
@@ -6,14 +6,23 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ResponseData struct {
+type Response struct {
 	Code Code        `json:"code"`
 	Msg  interface{} `json:"msg"`
 	Data interface{} `json:"data,omitempty"`
 }
 
+func ResponseSuccess(c *gin.Context, data interface{}) {
+	c.JSON(http.StatusOK, &Response{
+		Code: SUCCESS,
+		Msg:  SUCCESS.Msg(),
+		Data: data,
+	})
+	c.Abort()
+}
+
 func ResponseError(c *gin.Context, code Code) {
-	c.JSON(http.StatusOK, &ResponseData{
+	c.JSON(http.StatusOK, &Response{
 		Code: code,
 		Msg:  code.Msg(),
 		Data: nil,
@@ -22,19 +31,10 @@ func ResponseError(c *gin.Context, code Code) {
 }
 
 func ResponseErrorWithMsg(c *gin.Context, code Code, msg interface{}) {
-	c.JSON(http.StatusOK, &ResponseData{
+	c.JSON(http.StatusOK, &Response{
 		Code: code,
 		Msg:  msg,
 		Data: nil,
-	})
-	c.Abort()
-}
-
-func ResponseSuccess(c *gin.Context, data interface{}) {
-	c.JSON(http.StatusOK, &ResponseData{
-		Code: Success,
-		Msg:  Success.Msg(),
-		Data: data,
 	})
 	c.Abort()
 }

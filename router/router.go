@@ -1,7 +1,6 @@
 package router
 
 import (
-	"go-project/logger"
 	"go-project/middleware"
 	"net/http"
 
@@ -9,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Setup(mode string) *gin.Engine {
+func Init(mode string) *gin.Engine {
 	if mode == gin.DebugMode || mode == "dev" {
 		gin.SetMode(gin.DebugMode)
 	} else {
@@ -17,8 +16,8 @@ func Setup(mode string) *gin.Engine {
 	}
 
 	r := gin.New()
-	r.Use(logger.GinLogger())
-	r.Use(logger.GinRecovery(true))
+	r.Use(middleware.GinLogger())
+	r.Use(middleware.GinRecovery(true))
 	r.Use(middleware.CORSMiddleware())
 
 	// 返回纯文本格式的响应
@@ -33,6 +32,12 @@ func Setup(mode string) *gin.Engine {
 		})
 	})
 
+	api := r.Group("/v0")
+	api.Use(middleware.Auth())
+	{
+
+	}
+
 	// /debug/pprof/ (性能分析首页)
 	// /debug/pprof/heap (内存分析)
 	// /debug/pprof/goroutine (协程分析)
@@ -41,7 +46,7 @@ func Setup(mode string) *gin.Engine {
 	pprof.Register(r)
 
 	r.NoRoute(func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"msg": "404",
 		})
 	})

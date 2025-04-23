@@ -15,7 +15,7 @@ func Init(cfg *setting.RedisConfig) {
 	rdb = redis.NewClient(&redis.Options{
 		Addr:     cfg.Host + ":" + cfg.Port,
 		Password: cfg.Password,
-		DB:       cfg.DefaultDb,
+		DB:       cfg.DefaultDB,
 	})
 
 	// 创建带有超时控制的上下文

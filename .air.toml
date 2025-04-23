@@ -1,0 +1,68 @@
+# [Air](https://github.com/cosmtrek/air) TOML 格式的配置文件
+
+# 项目根目录，表示当前目录是项目的根目录
+root = "."
+
+# 临时文件存储目录，编译过程中生成的文件会放到此目录
+tmp_dir = "tmp"
+
+# 构建相关的配置
+[build]
+# 编译命令，go build 用于编译项目，-o ./tmp/main 将生成的可执行文件输出到 tmp/main
+# cmd = "go build -o ./tmp/main ."
+# cmd = "go build -o ./tmp/main.exe ."
+
+# 指定生成的可执行文件路径，Air 会监控并重新启动该文件
+# bin = "tmp/main"
+# bin = "tmp/main.exe"
+
+# 启动时的完整命令，设置环境变量 APP_ENV=dev 并运行编译后的可执行文件
+# 可通过该命令启动开发环境
+# full_bin = "APP_ENV=dev APP_USER=air ./tmp/main"
+# full_bin = "tmp/main.exe"
+
+# 修改编译命令为 go run
+cmd = "go run . config/settings.yml"
+
+# 由于使用 go run，不需要指定可执行文件路径
+bin = ""
+
+# 启动时的完整命令，直接使用修改后的编译命令
+full_bin = "go run . config/settings.yml"
+
+# 指定需要监视的文件扩展名，文件变动时会触发热重载
+include_ext = ["go", "tpl", "tmpl", "html", "ini"]
+
+# 排除不需要监视的目录，Air 会忽略这些目录中的文件变动
+exclude_dir = ["assets", "tmp", "vendor", "frontend/node_modules"]
+
+# 监听以下指定目录的文件（此项为空数组，表示默认监听根目录及其子目录）
+include_dir = []
+
+# 排除不需要监视的文件，可以为空列表（默认不排除任何文件）
+exclude_file = []
+
+# 文件变化后的延迟时间（单位：毫秒），表示在文件变动后等待多少时间才进行构建
+# 例如，1000 毫秒表示文件变化后等待 1 秒才触发构建
+delay = 1000
+
+# 发生构建错误时，停止运行旧的二进制文件，避免错误时继续执行未更新的代码
+stop_on_error = true
+
+# air 的日志文件名，该日志文件放置在你的 tmp_dir 中
+log = "air_errors.log"
+
+[log]
+# 显示日志时间
+time = true
+
+[color]
+# 自定义每个部分显示的颜色。可以帮助区分不同日志类型
+main = "magenta"  # 主日志颜色
+watcher = "cyan"  # 监视器日志颜色
+build = "yellow"  # 构建日志颜色
+runner = "green"  # 运行时日志颜色
+
+[misc]
+# 退出时删除 tmp 目录，保持清洁
+clean_on_exit = true

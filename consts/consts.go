@@ -9,7 +9,7 @@ var (
 	KNOWLEDGE_BASE_TMP_PATH     = "/knowledgeBase_temp"
 )
 
-func Init(cfg *setting.VerctorDbConfig) {
+func Init(cfg *setting.VerctorDBConfig) {
 	SiteCollectionView = cfg.SiteCollectionView
 	KnowledgeBaseCollectionView = cfg.KnowledgeBaseCollectionView
 }

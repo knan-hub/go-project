@@ -12,18 +12,20 @@ type Settings struct {
 	Application ApplicationConfig `mapstructure:"application"`
 	Self        SelfConfig        `mapstructure:"self"`
 	Log         LogConfig         `mapstructure:"log"`
-	VerctorDb   VerctorDbConfig   `mapstructure:"verctorDb"`
+	VerctorDB   VerctorDBConfig   `mapstructure:"verctorDB"`
 	Redis       RedisConfig       `mapstructure:"redis"`
 }
 
 type ApplicationConfig struct {
-	Name      string `mapstructure:"name"`
-	Mode      string `mapstructure:"mode"`
-	Host      string `mapstructure:"host"`
-	Port      int    `mapstructure:"port"`
-	Version   string `mapstructure:"version"`
-	StartTime string `mapstructure:"start_time"`
-	MachineID int64  `mapstructure:"machine_id"`
+	Name         string        `mapstructure:"name"`
+	Mode         string        `mapstructure:"mode"`
+	Host         string        `mapstructure:"host"`
+	Port         int           `mapstructure:"port"`
+	ReadTimeout  time.Duration `mapstructure:"read_timeout"`
+	WriteTimeout time.Duration `mapstructure:"write_timeout"`
+	Version      string        `mapstructure:"version"`
+	StartTime    string        `mapstructure:"start_time"`
+	MachineID    int64         `mapstructure:"machine_id"`
 }
 
 type SelfConfig struct {
@@ -38,7 +40,7 @@ type LogConfig struct {
 	MaxBackups int    `mapstructure:"max_backups"`
 }
 
-type VerctorDbConfig struct {
+type VerctorDBConfig struct {
 	Url                         string `mapstructure:"url"`
 	Key                         string `mapstructure:"key"`
 	Username                    string `mapstructure:"username"`
@@ -51,8 +53,8 @@ type RedisConfig struct {
 	Host        string        `mapstructure:"host"`
 	Port        string        `mapstructure:"port"`
 	Password    string        `mapstructure:"password"`
-	DefaultDb   int           `mapstructure:"defaultDb"`
-	DialTimeout time.Duration `mapstructure:"dialTimeout"`
+	DefaultDB   int           `mapstructure:"default_DB"`
+	DialTimeout time.Duration `mapstructure:"dial_timeout"`
 }
 
 var Config = new(Settings)
