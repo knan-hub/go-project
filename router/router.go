@@ -40,6 +40,21 @@ func Init(mode string) *gin.Engine {
 		api.GET("/cache", middleware.Auth(), controller.Get)
 	}
 
+	api.Use(middleware.Auth())
+	{
+		api.POST("/vector/uploadSite", controller.UploadSite)
+		api.POST("/vector/searchText", controller.SearchText)
+
+		api.POST("/knowledgeBase/uploadFile", controller.UploadKnowledgeBaseFile)
+		api.POST("/knowledgeBase/uploadSite", controller.UploadKnowledgeBaseSite)
+
+		api.DELETE("/knowledgeBase/:knowledgeBaseId", controller.DeleteKnowledgeBase)
+		api.DELETE("/knowledgeBaseItem/:knowledgeBaseItemId", controller.DeleteKnowledgeBaseItem)
+
+		api.POST("/knowledgeBase/searchText", controller.SearchKnowledgeBase)
+		api.GET("/knowledgeBase/text", controller.GetTextByDocumentSetId)
+	}
+
 	// /debug/pprof/ (性能分析首页)
 	// /debug/pprof/heap (内存分析)
 	// /debug/pprof/goroutine (协程分析)
