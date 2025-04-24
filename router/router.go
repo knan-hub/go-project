@@ -55,6 +55,12 @@ func Init(mode string) *gin.Engine {
 		api.GET("/knowledgeBase/text", controller.GetTextByDocumentSetId)
 	}
 
+	api.Use(middleware.Auth())
+	{
+		api.POST("/crawlers/fetchContent", controller.FetchContent)
+		api.POST("/crawlers/fetchLinks", controller.FetchLinks)
+	}
+
 	// /debug/pprof/ (性能分析首页)
 	// /debug/pprof/heap (内存分析)
 	// /debug/pprof/goroutine (协程分析)

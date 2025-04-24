@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"go-project/common"
 	"go-project/redis"
 
@@ -13,11 +12,10 @@ func Set(c *gin.Context) {
 		Key   string `json:"key" validate:"required"`
 		Value string `json:"value"`
 	}
-
 	if err := common.BindAndValidate(c, &params); err != nil {
 		return
 	}
-	fmt.Println("123")
+
 	err := redis.Set(c, params.Key, params.Value)
 	if err != nil {
 		common.ResponseError(c, common.REDIS_SET_ERROR)
