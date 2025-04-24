@@ -5,3 +5,12 @@ runtime/
 tmp/
 
 web_app.log
+__debug*
+test.md
+testRepos
+testFiles
+
+log
+
+go-project
+chrome

@@ -30,9 +30,9 @@ func NewSitePage() *SitePage {
 	}
 }
 
-func (sitePage *SitePage) UploadFile(c context.Context, filepath string, sitename string, username string, dir string, fullname string) (err error) {
+func (sitePage *SitePage) UploadFile(ctx context.Context, filepath string, sitename string, username string, dir string, fullname string) (err error) {
 	documentSetName := generateDocumentSetName(fullname)
-	res, err := sitePage.Coll.LoadAndSplitText(c, tcvectordb.LoadAndSplitTextParams{
+	res, err := sitePage.Coll.LoadAndSplitText(ctx, tcvectordb.LoadAndSplitTextParams{
 		LocalFilePath:   filepath,
 		DocumentSetName: documentSetName,
 		MetaData: map[string]interface{}{
@@ -53,17 +53,17 @@ func generateDocumentSetName(fullname string, args ...string) string {
 	return strings.Join(args, "-") + "." + fileType
 }
 
-func (sitePage *SitePage) DeleteFiles(c context.Context, files []string) (err error) {
+func (sitePage *SitePage) DeleteFiles(ctx context.Context, files []string) (err error) {
 	documentSetNames := make([]string, len(files))
 	for i, file := range files {
 		documentSetNames[i] = generateDocumentSetName(file)
 	}
-	res, err := sitePage.Coll.DeleteByNames(c, documentSetNames...)
+	res, err := sitePage.Coll.DeleteByNames(ctx, documentSetNames...)
 	logger.Logger.Info(fmt.Sprintf("DeleteFilesResult: %+v", res.AffectedCount))
 	return
 }
 
-func (sitePage *SitePage) Search(c context.Context, params SiteSearchParams) (results []tcvectordb.AISearchDocumentSet, err error) {
+func (sitePage *SitePage) Search(ctx context.Context, params SiteSearchParams) (results []tcvectordb.AISearchDocumentSet, err error) {
 	if params.Limit == 0 {
 		params.Limit = 3
 	}
@@ -82,7 +82,7 @@ func (sitePage *SitePage) Search(c context.Context, params SiteSearchParams) (re
 	}
 
 	filterStr := strings.Join(filters, " and ")
-	res, err := sitePage.Coll.Search(c, tcvectordb.SearchAIDocumentSetsParams{
+	res, err := sitePage.Coll.Search(ctx, tcvectordb.SearchAIDocumentSetsParams{
 		Content: params.Query,
 		Limit:   params.Limit,
 		Filter:  tcvectordb.NewFilter(filterStr),

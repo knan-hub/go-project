@@ -39,18 +39,18 @@ func NewGitRepo(url string) *GitRepo {
 	}
 }
 
-func (repo *GitRepo) ProcessSite(c context.Context, lastCommitId string, newCommitId string) (err error) {
-	err = repo.Download(c)
+func (repo *GitRepo) ProcessSite(ctx context.Context, lastCommitId string, newCommitId string) (err error) {
+	err = repo.Download(ctx)
 	if err != nil {
 		return
 	}
 
-	defer repo.Clean(c)
+	defer repo.Clean(ctx)
 
 	if lastCommitId == "" || newCommitId == "" {
-		err = repo.UploadMdFiles(c)
+		err = repo.UploadMdFiles(ctx)
 	} else {
-		updateFiles, deleteFiles, _err := repo.GetDiffFiles(c, lastCommitId, newCommitId)
+		updateFiles, deleteFiles, _err := repo.GetDiffFiles(ctx, lastCommitId, newCommitId)
 		sitePage := NewSitePage()
 		if _err != nil {
 			return _err
@@ -59,14 +59,14 @@ func (repo *GitRepo) ProcessSite(c context.Context, lastCommitId string, newComm
 		for _, file := range updateFiles {
 			username, sitename, dir := extractValuesFromPath(file)
 			logger.Logger.Info(fmt.Sprintf("Uploading Diff file: %s", filepath.Join(repo.Dir, file)))
-			err = sitePage.UploadFile(c, filepath.Join(repo.Dir, file), sitename, username, dir, file)
+			err = sitePage.UploadFile(ctx, filepath.Join(repo.Dir, file), sitename, username, dir, file)
 			if err != nil {
 				return
 			}
 		}
 
 		if len(deleteFiles) > 0 {
-			err = sitePage.DeleteFiles(c, deleteFiles)
+			err = sitePage.DeleteFiles(ctx, deleteFiles)
 			if err != nil {
 				return
 			}
@@ -76,7 +76,7 @@ func (repo *GitRepo) ProcessSite(c context.Context, lastCommitId string, newComm
 	return
 }
 
-func (repo *GitRepo) Download(c context.Context) (err error) {
+func (repo *GitRepo) Download(ctx context.Context) (err error) {
 	logger.Logger.Info(fmt.Sprintf("Cloning %s repository to %s", repo.Url, repo.Dir))
 	cmd := exec.Command("git", "clone", repo.Url, repo.Dir)
 	out, err := cmd.CombinedOutput()
@@ -88,7 +88,7 @@ func (repo *GitRepo) Download(c context.Context) (err error) {
 	return nil
 }
 
-func (repo *GitRepo) Clean(c context.Context) (err error) {
+func (repo *GitRepo) Clean(ctx context.Context) (err error) {
 	err = os.RemoveAll(repo.Dir)
 	if err != nil {
 		logger.Logger.Error(fmt.Sprintf("failed to remove %s repository: %s", repo.Dir, err))
@@ -98,9 +98,9 @@ func (repo *GitRepo) Clean(c context.Context) (err error) {
 	return nil
 }
 
-func (repo *GitRepo) UploadMdFiles(c context.Context) (err error) {
+func (repo *GitRepo) UploadMdFiles(ctx context.Context) (err error) {
 	sitePage := NewSitePage()
-	files, err := repo.WalkMdFiles(c, "")
+	files, err := repo.WalkMdFiles(ctx, "")
 	if err != nil {
 		return err
 	}
@@ -109,7 +109,7 @@ func (repo *GitRepo) UploadMdFiles(c context.Context) (err error) {
 		// 上传文件到向量数据库
 		username, sitename, dir := extractValuesFromPath(file)
 		logger.Logger.Info(fmt.Sprintf("Uploading file: %s", filepath.Join(repo.Dir, file)))
-		err = sitePage.UploadFile(c, filepath.Join(repo.Dir, file), sitename, username, dir, file)
+		err = sitePage.UploadFile(ctx, filepath.Join(repo.Dir, file), sitename, username, dir, file)
 		if err != nil {
 			return err
 		}
@@ -206,7 +206,7 @@ func extractValuesFromPath(path string) (username string, sitename string, first
 	return
 }
 
-func (repo *GitRepo) GetDiffFiles(c context.Context, lastCommitId string, newCommitId string) (updateFiles []string, deleteFiles []string, err error) {
+func (repo *GitRepo) GetDiffFiles(ctx context.Context, lastCommitId string, newCommitId string) (updateFiles []string, deleteFiles []string, err error) {
 	cmd := exec.Command("git", "diff", "--name-status", lastCommitId, newCommitId)
 	cmd.Dir = repo.Dir
 	out, err := cmd.CombinedOutput()
@@ -243,24 +243,24 @@ func (repo *GitRepo) GetDiffFiles(c context.Context, lastCommitId string, newCom
 	return
 }
 
-func (repo *GitRepo) ProcessKnowledgeBase(c context.Context, uploadParams KnowledgeSiteUploadParams) (err error) {
+func (repo *GitRepo) ProcessKnowledgeBase(ctx context.Context, uploadParams KnowledgeSiteUploadParams) (err error) {
 	// 先删除knowledgeBaseItem
 	knowledgeBase := NewKnowledgeBase()
-	err = knowledgeBase.DeleteFileByKnowledgeBaseItemId(c, uploadParams.KnowledgeBaseItemId)
+	err = knowledgeBase.DeleteFileByKnowledgeBaseItemId(ctx, uploadParams.KnowledgeBaseItemId)
 	if err != nil {
 		return
 	}
 
 	// TODO 考虑缓存下来git文件，不用每次都download
-	err = repo.Download(c)
+	err = repo.Download(ctx)
 	if err != nil {
 		return
 	}
 
-	defer repo.Clean(c)
+	defer repo.Clean(ctx)
 
 	subPath := filepath.Join(uploadParams.Site, uploadParams.Path)
-	files, err := repo.WalkMdFiles(c, subPath)
+	files, err := repo.WalkMdFiles(ctx, subPath)
 	if err != nil {
 		return err
 	}
@@ -268,7 +268,7 @@ func (repo *GitRepo) ProcessKnowledgeBase(c context.Context, uploadParams Knowle
 	for _, file := range files {
 		// 上传文件到向量数据库
 		knowledgeBase := NewKnowledgeBase()
-		res, err := knowledgeBase.UploadFile(c, filepath.Join(repo.Dir, file), KnowledgeBaseIndex{
+		res, err := knowledgeBase.UploadFile(ctx, filepath.Join(repo.Dir, file), KnowledgeBaseIndex{
 			KnowledgeBaseId:     uploadParams.KnowledgeBaseId,
 			KnowledgeBaseItemId: uploadParams.KnowledgeBaseItemId,
 			Path:                uploadParams.Path,

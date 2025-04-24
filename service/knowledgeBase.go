@@ -48,7 +48,7 @@ func NewKnowledgeBase() *KnowledgeBase {
 	}
 }
 
-func (base *KnowledgeBase) UploadFile(c context.Context, filepath string, baseIndex KnowledgeBaseIndex) (res *tcvectordb.LoadAndSplitTextResult, err error) {
+func (base *KnowledgeBase) UploadFile(ctx context.Context, filepath string, baseIndex KnowledgeBaseIndex) (res *tcvectordb.LoadAndSplitTextResult, err error) {
 	// 判断下文件内容是否为空
 	fileInfo, err := os.Stat(filepath)
 	if err != nil {
@@ -63,7 +63,7 @@ func (base *KnowledgeBase) UploadFile(c context.Context, filepath string, baseIn
 	addTitleToChunk := true
 	documentSetName := generateDocumentSetName(filepath, baseIndex.KnowledgeBaseId, baseIndex.KnowledgeBaseItemId, baseIndex.Filename)
 
-	res, err = base.Coll.LoadAndSplitText(c, tcvectordb.LoadAndSplitTextParams{
+	res, err = base.Coll.LoadAndSplitText(ctx, tcvectordb.LoadAndSplitTextParams{
 		LocalFilePath:   filepath,
 		DocumentSetName: documentSetName,
 		MetaData: map[string]interface{}{
@@ -89,23 +89,23 @@ func (base *KnowledgeBase) UploadFile(c context.Context, filepath string, baseIn
 	return
 }
 
-func (base *KnowledgeBase) DeleteFileByKnowledgeBaseItemId(c context.Context, knowledgeBaseItemId string) (err error) {
-	res, err := base.Coll.Delete(c, tcvectordb.DeleteAIDocumentSetParams{
+func (base *KnowledgeBase) DeleteFileByKnowledgeBaseItemId(ctx context.Context, knowledgeBaseItemId string) (err error) {
+	res, err := base.Coll.Delete(ctx, tcvectordb.DeleteAIDocumentSetParams{
 		Filter: tcvectordb.NewFilter(fmt.Sprintf(`knowledgeBaseItemId = "%s"`, knowledgeBaseItemId)),
 	})
 	logger.Logger.Info(fmt.Sprintf("DeleteFilesResult: %+v", res.AffectedCount))
 	return
 }
 
-func (base *KnowledgeBase) DeleteFileByKnowledgeBaseId(c context.Context, knowledgeBaseId string) (err error) {
-	res, err := base.Coll.Delete(c, tcvectordb.DeleteAIDocumentSetParams{
+func (base *KnowledgeBase) DeleteFileByKnowledgeBaseId(ctx context.Context, knowledgeBaseId string) (err error) {
+	res, err := base.Coll.Delete(ctx, tcvectordb.DeleteAIDocumentSetParams{
 		Filter: tcvectordb.NewFilter(fmt.Sprintf(`knowledgeBaseId = "%s"`, knowledgeBaseId)),
 	})
 	logger.Logger.Info(fmt.Sprintf("DeleteFilesResult: %+v", res.AffectedCount))
 	return
 }
 
-func (base *KnowledgeBase) Search(c context.Context, params KnowledgeSearchParams) (results []tcvectordb.AISearchDocumentSet, err error) {
+func (base *KnowledgeBase) Search(ctx context.Context, params KnowledgeSearchParams) (results []tcvectordb.AISearchDocumentSet, err error) {
 	if params.Limit == 0 {
 		params.Limit = 3
 	}
@@ -126,7 +126,7 @@ func (base *KnowledgeBase) Search(c context.Context, params KnowledgeSearchParam
 	filterStr := strings.Join(filters, " and ")
 	enableRerank := true
 
-	res, err := base.Coll.Search(c, tcvectordb.SearchAIDocumentSetsParams{
+	res, err := base.Coll.Search(ctx, tcvectordb.SearchAIDocumentSetsParams{
 		Content: params.Query,
 		Limit:   params.Limit,
 		Filter:  tcvectordb.NewFilter(filterStr),

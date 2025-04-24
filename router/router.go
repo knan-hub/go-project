@@ -57,7 +57,9 @@ func Init(mode string) *gin.Engine {
 
 	api.Use(middleware.Auth())
 	{
+		// 从给定的URL中提取内容
 		api.POST("/crawlers/fetchContent", controller.FetchContent)
+		// 从给定的URL中提取链接
 		api.POST("/crawlers/fetchLinks", controller.FetchLinks)
 	}
 

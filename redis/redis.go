@@ -71,3 +71,11 @@ func Exists(ctx context.Context, key string) (bool, error) {
 func SetNX(ctx context.Context, key string, value interface{}, expiration time.Duration) (bool, error) {
 	return rdb.SetNX(ctx, key, value, expiration).Result()
 }
+
+func TTL(ctx context.Context, key string) (time.Duration, error) {
+	return rdb.TTL(ctx, key).Result()
+}
+
+func Expire(ctx context.Context, key string, expiration time.Duration) error {
+	return rdb.Expire(ctx, key, expiration).Err()
+}
