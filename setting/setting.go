@@ -14,6 +14,7 @@ type Settings struct {
 	Log         LogConfig         `mapstructure:"log"`
 	VerctorDB   VerctorDBConfig   `mapstructure:"verctorDB"`
 	Redis       RedisConfig       `mapstructure:"redis"`
+	MySQL       MySQLConfig       `mapstructure:"mysql"`
 }
 
 type ApplicationConfig struct {
@@ -55,6 +56,17 @@ type RedisConfig struct {
 	Password    string        `mapstructure:"password"`
 	DefaultDB   int           `mapstructure:"default_DB"`
 	DialTimeout time.Duration `mapstructure:"dial_timeout"`
+}
+
+type MySQLConfig struct {
+	Host            string        `mapstructure:"host"`
+	Port            int           `mapstructure:"port"`
+	Username        string        `mapstructure:"username"`
+	Password        string        `mapstructure:"password"`
+	DatabaseName    string        `mapstructure:"database_name"`
+	MaxIdleConns    int           `mapstructure:"max_idle_conns"`
+	MaxOpenConns    int           `mapstructure:"max_open_conns"`
+	ConnMaxLifetime time.Duration `mapstructure:"conn_max_lifetime"`
 }
 
 var Config = new(Settings)

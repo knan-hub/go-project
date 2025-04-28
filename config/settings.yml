@@ -30,3 +30,12 @@ settings:
     password: # 空
     default_DB: 0
     dial_timeout: 5s
+  mysql:
+    host: localhost
+    port: 3306
+    username: "root"
+    password: "root"
+    database_name: "edu_local"
+    max_idle_conns: 100
+    max_open_conns: 300
+    conn_max_lifetime: 10s

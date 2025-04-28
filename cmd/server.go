@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go-project/consts"
 	"go-project/logger"
+	"go-project/mysql"
 	"go-project/redis"
 	"go-project/router"
 	"go-project/setting"
@@ -52,6 +53,8 @@ func Execute() {
 	// }
 
 	redis.Init(&setting.Config.Redis)
+
+	mysql.Init(&setting.Config.MySQL)
 
 	r := router.Init(setting.Config.Application.Mode)
 
