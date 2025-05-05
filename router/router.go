@@ -34,33 +34,32 @@ func Init(mode string) *gin.Engine {
 	})
 
 	api := r.Group("/v0")
-	api.Use(middleware.InternalAuthenticated())
+
+	// 内部认证路由组
+	internal := api.Group("")
+	internal.Use(middleware.InternalAuthenticated())
 	{
-		api.POST("/cache", controller.Set)
-		api.GET("/cache", controller.Get)
+		internal.POST("/cache", controller.Set)
+		internal.GET("/cache", controller.Get)
+		internal.POST("/crawlers/fetchContent", controller.FetchContent)
+		internal.POST("/crawlers/fetchLinks", controller.FetchLinks)
 	}
 
-	api.Use(middleware.Authenticated())
+	// 普通认证路由组
+	auth := api.Group("")
+	auth.Use(middleware.Authenticated())
 	{
-		api.POST("/vector/uploadSite", controller.UploadSite)
-		api.POST("/vector/searchText", controller.SearchText)
+		auth.POST("/vector/uploadSite", controller.UploadSite)
+		auth.POST("/vector/searchText", controller.SearchText)
 
-		api.POST("/knowledgeBase/uploadFile", controller.UploadKnowledgeBaseFile)
-		api.POST("/knowledgeBase/uploadSite", controller.UploadKnowledgeBaseSite)
+		auth.POST("/knowledgeBase/uploadFile", controller.UploadKnowledgeBaseFile)
+		auth.POST("/knowledgeBase/uploadSite", controller.UploadKnowledgeBaseSite)
 
-		api.DELETE("/knowledgeBase/:knowledgeBaseId", controller.DeleteKnowledgeBase)
-		api.DELETE("/knowledgeBaseItem/:knowledgeBaseItemId", controller.DeleteKnowledgeBaseItem)
+		auth.DELETE("/knowledgeBase/:knowledgeBaseId", controller.DeleteKnowledgeBase)
+		auth.DELETE("/knowledgeBaseItem/:knowledgeBaseItemId", controller.DeleteKnowledgeBaseItem)
 
-		api.POST("/knowledgeBase/searchText", controller.SearchKnowledgeBase)
-		api.GET("/knowledgeBase/text", controller.GetTextByDocumentSetId)
-	}
-
-	api.Use(middleware.InternalAuthenticated())
-	{
-		// 从给定的URL中提取内容
-		api.POST("/crawlers/fetchContent", controller.FetchContent)
-		// 从给定的URL中提取链接
-		api.POST("/crawlers/fetchLinks", controller.FetchLinks)
+		auth.POST("/knowledgeBase/searchText", controller.SearchKnowledgeBase)
+		auth.GET("/knowledgeBase/text", controller.GetTextByDocumentSetId)
 	}
 
 	// /debug/pprof/ (性能分析首页)
