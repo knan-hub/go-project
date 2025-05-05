@@ -39,3 +39,5 @@ settings:
     max_idle_conns: 100
     max_open_conns: 300
     conn_max_lifetime: 10s
+  servers:
+    coreservice_url: ""

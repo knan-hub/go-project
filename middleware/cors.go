@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CORSMiddleware() gin.HandlerFunc {
+func CORS() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 允许任何来源的请求
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")

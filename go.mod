@@ -10,7 +10,7 @@ require (
 	github.com/go-playground/validator/v10 v10.26.0
 	github.com/go-rod/rod v0.116.2
 	github.com/google/uuid v1.6.0
-	github.com/jinzhu/gorm v1.9.16
+	github.com/jasonlvhit/gocron v0.0.1
 	github.com/redis/go-redis/v9 v9.7.3
 	github.com/spf13/viper v1.20.1
 	github.com/tencent/vectordatabase-sdk-go v1.7.0
@@ -18,6 +18,8 @@ require (
 	golang.org/x/net v0.39.0
 	golang.org/x/text v0.24.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
+	gorm.io/driver/mysql v1.5.7
+	gorm.io/gorm v1.26.0
 )
 
 require (
@@ -39,6 +41,7 @@ require (
 	github.com/goccy/go-json v0.10.5 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.10 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect

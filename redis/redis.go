@@ -2,6 +2,7 @@ package redis
 
 import (
 	"context"
+	"fmt"
 	"go-project/setting"
 	"time"
 
@@ -26,6 +27,10 @@ func Init(cfg *setting.RedisConfig) {
 	if err != nil {
 		panic("Redis初始化失败! " + err.Error())
 	}
+}
+
+func Close() {
+	_ = rdb.Close()
 }
 
 // Set设置Redis键值对，支持过期时间设置
@@ -78,4 +83,27 @@ func TTL(ctx context.Context, key string) (time.Duration, error) {
 
 func Expire(ctx context.Context, key string, expiration time.Duration) error {
 	return rdb.Expire(ctx, key, expiration).Err()
+}
+
+func RunWithLock(ctx context.Context, keyPrefix string, timeout time.Duration, callback func() (interface{}, error)) (rtn interface{}, err error) {
+	key := fmt.Sprintf("lock:%s", keyPrefix)
+	// 尝试获取锁
+	locked, err := SetNX(ctx, key, "1", timeout)
+	if err != nil {
+		return nil, fmt.Errorf("获取锁时发生错误: %w", err)
+	}
+
+	if !locked {
+		return nil, fmt.Errorf("%s 锁已被其他进程获取", key)
+	}
+
+	fmt.Printf("%s 锁已获取，正在执行业务逻辑...\n", key)
+
+	defer func() {
+		if delErr := Del(ctx, key); delErr != nil {
+			fmt.Printf("%s 释放锁时发生错误: %v\n", key, delErr)
+		}
+	}()
+
+	return callback()
 }

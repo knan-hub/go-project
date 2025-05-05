@@ -9,6 +9,8 @@ var (
 	KNOWLEDGE_BASE_TMP_PATH     = "/knowledgeBase_temp"
 )
 
+const CtxUserIDKey = "userID"
+
 func Init(cfg *setting.VerctorDBConfig) {
 	SiteCollectionView = cfg.SiteCollectionView
 	KnowledgeBaseCollectionView = cfg.KnowledgeBaseCollectionView

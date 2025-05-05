@@ -8,6 +8,7 @@ import (
 	"go-project/mysql"
 	"go-project/redis"
 	"go-project/router"
+	"go-project/scheduler"
 	"go-project/setting"
 	"net/http"
 	"os"
@@ -53,8 +54,12 @@ func Execute() {
 	// }
 
 	redis.Init(&setting.Config.Redis)
+	defer redis.Close()
 
 	mysql.Init(&setting.Config.MySQL)
+	defer mysql.Close()
+
+	scheduler.Init()
 
 	r := router.Init(setting.Config.Application.Mode)
 

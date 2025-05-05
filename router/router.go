@@ -19,7 +19,7 @@ func Init(mode string) *gin.Engine {
 	r := gin.New()
 	r.Use(middleware.GinLogger())
 	r.Use(middleware.GinRecovery(true))
-	r.Use(middleware.CORSMiddleware())
+	r.Use(middleware.CORS())
 
 	// 返回纯文本格式的响应
 	r.GET("/ping", func(c *gin.Context) {
@@ -34,13 +34,13 @@ func Init(mode string) *gin.Engine {
 	})
 
 	api := r.Group("/v0")
-	api.Use(middleware.Auth())
+	api.Use(middleware.InternalAuthenticated())
 	{
-		api.POST("/cache", middleware.Auth(), controller.Set)
-		api.GET("/cache", middleware.Auth(), controller.Get)
+		api.POST("/cache", controller.Set)
+		api.GET("/cache", controller.Get)
 	}
 
-	api.Use(middleware.Auth())
+	api.Use(middleware.Authenticated())
 	{
 		api.POST("/vector/uploadSite", controller.UploadSite)
 		api.POST("/vector/searchText", controller.SearchText)
@@ -55,7 +55,7 @@ func Init(mode string) *gin.Engine {
 		api.GET("/knowledgeBase/text", controller.GetTextByDocumentSetId)
 	}
 
-	api.Use(middleware.Auth())
+	api.Use(middleware.InternalAuthenticated())
 	{
 		// 从给定的URL中提取内容
 		api.POST("/crawlers/fetchContent", controller.FetchContent)

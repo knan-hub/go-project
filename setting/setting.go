@@ -15,6 +15,7 @@ type Settings struct {
 	VerctorDB   VerctorDBConfig   `mapstructure:"verctorDB"`
 	Redis       RedisConfig       `mapstructure:"redis"`
 	MySQL       MySQLConfig       `mapstructure:"mysql"`
+	Servers     ServersConfig     `mapstructure:"servers"`
 }
 
 type ApplicationConfig struct {
@@ -67,6 +68,10 @@ type MySQLConfig struct {
 	MaxIdleConns    int           `mapstructure:"max_idle_conns"`
 	MaxOpenConns    int           `mapstructure:"max_open_conns"`
 	ConnMaxLifetime time.Duration `mapstructure:"conn_max_lifetime"`
+}
+
+type ServersConfig struct {
+	CoreserviceUrl string `mapstructure:"coreservice_url"`
 }
 
 var Config = new(Settings)
