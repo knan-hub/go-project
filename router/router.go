@@ -60,6 +60,10 @@ func Init(mode string) *gin.Engine {
 
 		auth.POST("/knowledgeBase/searchText", controller.SearchKnowledgeBase)
 		auth.GET("/knowledgeBase/text", controller.GetTextByDocumentSetId)
+
+		// 临时容器的接口
+		auth.POST("/serverNodes", controller.CreateServerNodeHandler)
+		auth.GET("/serverNodes", controller.GetServerNodeHandler)
 	}
 
 	// /debug/pprof/ (性能分析首页)

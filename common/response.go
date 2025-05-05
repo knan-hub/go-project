@@ -13,10 +13,18 @@ type Response struct {
 }
 
 func ResponseSuccess(c *gin.Context, data ...interface{}) {
+	var respData interface{}
+	if len(data) == 0 {
+		respData = nil
+	} else if len(data) == 1 {
+		respData = data[0]
+	} else {
+		respData = data
+	}
 	c.JSON(http.StatusOK, &Response{
 		Code: SUCCESS,
 		Msg:  SUCCESS.Msg(),
-		Data: data,
+		Data: respData,
 	})
 	c.Abort()
 }
